@@ -4,22 +4,20 @@ services:
   proxy:
     image: nginx:latest
     container_name: proxy
-    hostname: proxy
     ports:
       - 18080:80
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/nginx.conf
     networks:
-      - proxy_test
+      - keycloak.docker.internal
     
   keycloak:
     image: jboss/keycloak:latest
     container_name: keycloak
-    hostname: keycloak
     ports:
       - 8080:8080
     networks:
-      - proxy_test
+      - keycloak.docker.internal
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
@@ -28,10 +26,9 @@ services:
 
   keycloak-bulk:
     image: int128/keycloak-bulk
-    hostname: keycloak-bulk
     container_name: keycloak-bulk
     networks:
-      - proxy_test
+      - keycloak.docker.internal
     ports:
       - 5000:5000
     environment:
@@ -43,10 +40,9 @@ services:
   terraform:
     build:
       context: ./terraform
-    hostname: terraform
     container_name: terraform-for-keycloak
     networks:
-      - proxy_test
+      - keycloak.docker.internal
     volumes:
       - ./terraform:/terraform:ro
     environment:
@@ -54,5 +50,5 @@ services:
       TZ: Asia/Tokyo
 
 networks:
-  proxy_test:
-    name: proxy_test
+  keycloak.docker.internal:
+    name: keycloak.docker.internal
