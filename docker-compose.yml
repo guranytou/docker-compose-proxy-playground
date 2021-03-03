@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  proxy:
+    image: nginx:latest
+    container_name: proxy
+    hostname: proxy
+    ports:
+      - 18080:80
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - proxy_test
+    
+  keycloak:
+    image: jboss/keycloak:latest
+    container_name: keycloak
+    hostname: keycloak
+    ports:
+      - 8080:8080
+    networks:
+      - proxy_test
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: h2
+      TZ: Asia/Tokyo
+
+  keycloak-bulk:
+    image: int128/keycloak-bulk
+    hostname: keycloak-bulk
+    container_name: keycloak-bulk
+    networks:
+      - proxy_test
+    ports:
+      - 5000:5000
+    environment:
+      OIDC_ISSUER: http://keycloak:8080/auth/realms/master
+      OIDC_CLIENT_ID: keycloak-bulk
+      OIDC_CLIENT_SECRET: 80a00dd6-7419-44a1-864d-ac8e44ebf68e
+      JWT_SECRET: 80a00dd6-7419-44a1-864d-ac8e44ebf68e
+
+  terraform:
+    build:
+      context: ./terraform
+    hostname: terraform
+    container_name: terraform-for-keycloak
+    networks:
+      - proxy_test
+    volumes:
+      - ./terraform:/terraform:ro
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080
+      TZ: Asia/Tokyo
+
+networks:
+  proxy_test:
+    name: proxy_test

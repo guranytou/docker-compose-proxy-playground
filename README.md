@@ -1,0 +1,2 @@
+# docker-compose-proxy-playground
+Dockerネットワーク内にリバースプロキシ（nginx）を立てて、keycloakとkeycloak-bulkのやりとりで発生するリダイレクト処理をいい感じにごにょごにょしたリポジトリ
