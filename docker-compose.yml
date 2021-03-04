@@ -14,7 +14,7 @@ services:
   keycloak:
     image: jboss/keycloak:latest
     container_name: keycloak
-    hostname: keycloak.docker.internal
+    hostname: iam
     ports:
       - 8080:8080
     networks:
@@ -28,12 +28,13 @@ services:
   keycloak-bulk:
     image: int128/keycloak-bulk
     container_name: keycloak-bulk
+    hostname: keycloak-bulk
     networks:
       - keycloak.docker.internal
     ports:
       - 5000:5000
     environment:
-      OIDC_ISSUER: http://keycloak.docker.internal:8080/auth/realms/master
+      OIDC_ISSUER: http://iam.keycloak.docker.internal:8080/auth/realms/master
       OIDC_CLIENT_ID: keycloak-bulk
       OIDC_CLIENT_SECRET: 80a00dd6-7419-44a1-864d-ac8e44ebf68e
       JWT_SECRET: 80a00dd6-7419-44a1-864d-ac8e44ebf68e
